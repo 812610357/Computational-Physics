@@ -16,7 +16,7 @@
 1.1 二分法
 1.2 不动点迭代法
 
-### 20210318
+### Class4 20210318
 
 1.3 精度的极限
 
@@ -26,6 +26,6 @@ $$\Delta r \thickapprox -\frac{\varepsilon g(r)}{F'(r)} $$
 条件数（误差放大因子）：
 $$\kappa = \left\lvert \frac{\Delta r / r}{\varepsilon g(r)/g(r)} \right\lvert = \left\lvert \frac{g(r)}{r F'(r)}\right\lvert$$
 
-### 20210322 
+### Class5 20210322 
 
 1.4 牛顿方法 
