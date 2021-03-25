@@ -39,3 +39,23 @@ $$\kappa = \left\lvert \frac{\Delta r / r}{\varepsilon g(r)/g(r)} \right\lvert =
 ### Class5 20210322 
 
 1.4 牛顿方法 
+
+$$x_{i+1}= x_i - \frac{f(x_i)}{f'(x_i)}$$
+
+$$\lim_{i \rightarrow \infty} \frac{e_{x+1}}{e_i^2} = M =\frac{f"(r)}{2f'(r)}$$
+
+对于单重根，为二次收敛，对于多重根，为线性收敛，此时
+
+$$\lim_{i \rightarrow \infty} \frac{e_{x+1}}{e_i} = S =\frac{m-1}{m}$$
+
+但是也可以进行改进，达到二次收敛，对于m重根，可作
+
+$$x_{i+1}= x_i - \frac{m f(x_i)}{f'(x_i)}$$
+
+
+
+### Class6 20210325
+
+1.5 割线法
+
+$$x_{i+1}=x_i-f(x_i) \frac{x_i-x_{i-1}}{f(x_i)-f(x_{i-1})}$$
