@@ -1,33 +1,40 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.misc import derivative
 
-steps=0
-s=0
-def NRM(fun,x0,errorArg=1e-6,m=1,procedure=False):
+steps = 0
+s = 0
+
+
+def FPI(fun, x0, errorArg):
     '''
-    # 牛顿方法（牛顿-拉弗森方法）
+    # 不动点迭代法求解函数
     ## 参数说明
-        `fun`：需要求解的方程fun(x)==0
-        `x0`：求解初始值
-        `errorArg`：求解精度，默认为1e-6
-        `m`：根的重述，默认为1
+    输入函数g(x)==x```fun```，求解起点```x0```，求解误差```errorArg```
+    ## 举例
+    >>> import numpy as np
+    >>> Bisecion(np.cos, 1 ,1e-8)
+    0.7390851300853067
+    >>> def f(x):\n
+            return (1+2*x**3)/(1+3*x**2)
+    >>> Bisecion(f ,1 ,1e-8)
+    0.6823278038280193
     '''
     global steps
     global s
-    steps=0
-    error=1
-    print('        x              e(i)        e(i)/e(i-1)    e(i)/e(i-1)^2')
-    while error>errorArg/2:
-        x=x0-m*fun(x0)/derivative(fun,x0,dx=errorArg/2,order=7)
-        error0=error
-        error=np.abs(x-x0)
-        if procedure==True:
-            print('%16.8e%16.8e%16.8e%16.8e'%(x0,error,error/error0,error/error0**2))
-        x0=x
-        steps+=1
+    steps = 0
+    error = 1
+    while error > errorArg:
+        x = fun(x0)
+        error = np.abs(x-x0)
+        x0 = x
+        steps += 1
+    s = np.abs(fun(x0)-x0)/error
     return x0
 
-def f(x):
-    return np.exp(np.sin(x)**3)+x**6-2*x**4-x**3-1
 
-print('r=%.6f'%NRM(f, 0.1,m=4,procedure=True),'steps=%d'%steps)
+def g1(x):
+    return x/3+1/(3*x**3)
+
+
+print('r=%.6f' % FPI(g1, 1.89, 1e-5), 'steps=%d' % steps)
