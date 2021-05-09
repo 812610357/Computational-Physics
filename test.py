@@ -36,5 +36,5 @@ def FPI(fun, x0, errorArg):
 def g1(x):
     return x/3+1/(3*x**3)
 
-
+np.aran
 print('r=%.6f' % FPI(g1, 1.89, 1e-5), 'steps=%d' % steps)
