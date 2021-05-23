@@ -1,40 +1,34 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.misc import derivative
 
-steps = 0
-s = 0
-
-
-def FPI(fun, x0, errorArg):
-    '''
-    # 不动点迭代法求解函数
-    ## 参数说明
-    输入函数g(x)==x```fun```，求解起点```x0```，求解误差```errorArg```
-    ## 举例
-    >>> import numpy as np
-    >>> Bisecion(np.cos, 1 ,1e-8)
-    0.7390851300853067
-    >>> def f(x):\n
-            return (1+2*x**3)/(1+3*x**2)
-    >>> Bisecion(f ,1 ,1e-8)
-    0.6823278038280193
-    '''
-    global steps
-    global s
-    steps = 0
-    error = 1
-    while error > errorArg:
-        x = fun(x0)
-        error = np.abs(x-x0)
-        x0 = x
-        steps += 1
-    s = np.abs(fun(x0)-x0)/error
-    return x0
+data = np.array([[0.9120, 13.7],
+                 [0.9860, 15.9],
+                 [1.0600, 18.5],
+                 [1.1300, 21.3],
+                 [1.1900, 23.5],
+                 [1.2600, 27.2],
+                 [1.3200, 32.7],
+                 [1.3800, 36.0],
+                 [1.4100, 38.6],
+                 [1.4900, 43.7]])
 
 
-def g1(x):
-    return x/3+1/(3*x**3)
+def r(c):
+    return np.array(c[0]*np.power(data[:, 0], c[1])-data[:, 1])
 
-np.aran
-print('r=%.6f' % FPI(g1, 1.89, 1e-5), 'steps=%d' % steps)
+
+def Dr(c):
+    return np.column_stack((np.power(data[:, 0], c[1]), c[0]*np.power(data[:, 0], c[1])*np.log(data[:, 0])))
+
+
+def Levenberg_Marquardt(r, Dr, x, lamb, iter_num):
+    for i in range(iter_num):
+        A = Dr(x)
+        ATA = A.T.dot(A)
+        v = -np.linalg.inv(ATA + lamb*np.diag(np.diag(ATA))).dot(A.T).dot(r(x))
+        x += v
+    return x
+
+
+c = np.ones(2)
+x = Levenberg_Marquardt(r, Dr, c, 1, 1000)
+print(x)
