@@ -1,34 +1,21 @@
 import numpy as np
 
-data = np.array([[0.9120, 13.7],
-                 [0.9860, 15.9],
-                 [1.0600, 18.5],
-                 [1.1300, 21.3],
-                 [1.1900, 23.5],
-                 [1.2600, 27.2],
-                 [1.3200, 32.7],
-                 [1.3800, 36.0],
-                 [1.4100, 38.6],
-                 [1.4900, 43.7]])
+def romberg(f, a, b, n=10):
+    h = b - a
+    R = np.zeros((n, n))
+    R[0, 0] = (f(a) + f(b))*h/2
 
+    for j in range(1, n):
+        h /= 2
+        R[j, 0] = R[j-1, 0]/2 + sum([f(a + (2*k+1)*h) for k in range(2**(j-1))])*h
+        for k in range(0, j):
+            R[j, k+1] = ((4**(k+1)*R[j, k] - R[j-1, k])) / (4**(k+1) - 1)
+        if R[j-1,j-1]-R[j-2,j-2]<0.5e-10:
+            return R
 
-def r(c):
-    return np.array(c[0]*np.power(data[:, 0], c[1])-data[:, 1])
+def f(x):
+    return x/np.sqrt(x**2+9)
 
-
-def Dr(c):
-    return np.column_stack((np.power(data[:, 0], c[1]), c[0]*np.power(data[:, 0], c[1])*np.log(data[:, 0])))
-
-
-def Levenberg_Marquardt(r, Dr, x, lamb, iter_num):
-    for i in range(iter_num):
-        A = Dr(x)
-        ATA = A.T.dot(A)
-        v = -np.linalg.inv(ATA + lamb*np.diag(np.diag(ATA))).dot(A.T).dot(r(x))
-        x += v
-    return x
-
-
-c = np.ones(2)
-x = Levenberg_Marquardt(r, Dr, c, 1, 1000)
-print(x)
+I=romberg(f,0,4)
+print('I =',I)
+print('e =',np.abs(I-2))
