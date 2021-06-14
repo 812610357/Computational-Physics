@@ -1,0 +1,184 @@
+%!BIB program=biber
+
+\documentclass[twocolumn]{article}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{cases}
+\usepackage{graphicx}
+\usepackage{subfigure} 
+\usepackage{array}
+\usepackage{unicode-math}
+\usepackage[UTF8]{ctex}
+\usepackage[hidelinks]{hyperref}
+\usepackage{gbt7714}
+\usepackage{doi}
+\usepackage{xcolor}
+\usepackage{algorithm2e} %伪代码宏
+%\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\setmathfont{Cambria Math}
+\geometry{a4paper,left=0.5cm,right=0.5cm,top=0.5cm,bottom=0.5cm}
+
+\begin{document}
+\small
+
+\section{基础知识}
+
+\subsection{二进制十进制转换}
+例如$(53.7)_{10}=(110101.1\overline{0110})$
+\begin{align*}
+    53 \div 2 & = 26 \cdots 1 & 0.7 \times 2 & =0.4 + 1 \\
+    26 \div 2 & = 13 \cdots 0 & 0.4 \times 2 & =0.8 + 0 \\
+    13 \div 2 & = 6  \cdots 1 & 0.8 \times 2 & =0.6 + 1 \\
+    6  \div 2 & = 3  \cdots 0 & 0.6 \times 2 & =0.2 + 1 \\
+    3  \div 2 & = 1  \cdots 1 & 0.2 \times 2 & =0.4 + 0 \\
+    1  \div 2 & = 0  \cdots 1 & 0.4 \times 2 & =0.8 + 0
+\end{align*}
+
+\subsection{浮点数计算}
+标准化IEEE浮点数$\pm 1.bbb\cdots b \times 2^p$，IEEE最近舍入法则：对53位，如果为0，则舍去，如果为1，则进位。
+\begin{table}[h]
+    \centering
+    \begin{tabular}{cccc}
+        \hline
+        精度     & 符号 & 指数 & 尾数 \\
+        \hline
+        单精度   & 1    & 8    & 23   \\
+        双精度   & 1    & 11   & 52   \\
+        长双精度 & 1    & 15   & 64   \\
+        \hline
+    \end{tabular}
+\end{table}
+
+加减法时需要用0补齐到指数最大的数对应的位置。
+\begin{align*}
+    (8.3)_{10}=(1000.0\overline{1001})_2=1.0000\overline{1001}\times 2^3=1.\cdots 110011010                & \times 2^3 \\
+    (7.3)_{10}=(111.0\overline{1001})_2=1.110\overline{1\textcolor{red}{001}}\times 2^2=1.\cdots 100110011 & \times 2^2 \\
+    (8.3)_{10}-(7.3)_{10}=1.00001001\cdots 10011010\textcolor{blue}{0}                                     & \times 2^3 \\
+    -0.11101001\cdots 10011001\textcolor{red}{1}                                                           & \times 2^3 \\
+    =0.00100000\cdots 00000000\textcolor{red}{1}                                                           & \times 2^3 \\
+    =1.00000000\cdots 00000100\textcolor{white}{0}                                                         & \times 2^0
+\end{align*}
+
+\section{解方程}
+
+\subsection{二分法}
+\begin{algorithm}
+    \KwIn{初始区间$[a,b]$使$f(a)f(b)<0$}
+    \While{$(b-a)/2>TOL$}{
+        $c=(a+b)/2$\\
+        \If{$f(c) = 0$}{
+            \textbf{break}
+        }
+        \eIf{$f(a)f(c)<0$}{
+            $b=c$
+        }{
+            $a=c$
+        }
+    }
+    \KwOut{近似根$r=(a+b)/2$}
+\end{algorithm}
+
+\subsection{不动点迭代}
+\begin{align*}
+    x_{i+1} & =g(x_i) & |g'(r)| & <1
+\end{align*}
+
+\subsection{牛顿方法}
+\begin{align*}
+    x_{i+1} & =x_i-\frac{f(x_i)}{f(x_{i+1})} & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i^2} & =\left| \frac{f''(r)}{2f'(r)} \right| & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i} & =\frac{m-1}{m}
+\end{align*}
+
+\section{解方程组}
+
+\subsection{高斯消元法}
+高斯消元的操作次数：$\frac{2}{3}n^3$
+
+\subsection{LU分解}
+LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
+
+\subsection{PA=LU分解}
+部分主元：每一行根据第一列元素从大到小排序，避免湮灭问题。
+\begin{align*}
+    \begin{bmatrix}
+        2 & 3 \\
+        3 & 2
+    \end{bmatrix}
+    \begin{bmatrix}
+        x_1 \\
+        x_2
+    \end{bmatrix}
+     & =
+    \begin{bmatrix}
+        4 \\
+        1
+    \end{bmatrix}
+     & P & =
+    \begin{bmatrix}
+        0 & 1 \\
+        1 & 0
+    \end{bmatrix}
+     & L & =
+    \begin{bmatrix}
+        1           & 0 \\
+        \frac{2}{3} & 1
+    \end{bmatrix}
+\end{align*}
+\begin{align*}
+    A=
+    \begin{bmatrix}
+        2 & 3 \\
+        3 & 2
+    \end{bmatrix}
+    \rightarrow ① \leftrightarrow ② \rightarrow
+    \begin{bmatrix}
+        3 & 2 \\
+        2 & 3
+    \end{bmatrix}
+    \rightarrow ②-①\times\frac{2}{3}\rightarrow
+    \begin{bmatrix}
+        3 & 2           \\
+        0 & \frac{5}{3}
+    \end{bmatrix}
+    =U
+\end{align*}
+\begin{align*}
+    Lc=Pb\Rightarrow
+    \begin{bmatrix}
+        1           & 0 \\
+        \frac{2}{3} & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        c_1 \\
+        c_2
+    \end{bmatrix}
+    &=
+    \begin{bmatrix}
+        0 & 1 \\
+        1 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        4 \\
+        1
+    \end{bmatrix}
+    &
+    Ux=c \Rightarrow
+    \begin{bmatrix}
+        3 & 2           \\
+        0 & \frac{5}{3}
+    \end{bmatrix}
+    \begin{bmatrix}
+        x_1 \\
+        x_2
+    \end{bmatrix}
+    &=
+    \begin{bmatrix}
+        c_1 \\
+        c_2
+    \end{bmatrix}
+\end{align*}
+
+\subsection{迭代方法}
+要求矩阵$A$为严格对焦占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$
+\end{document}
