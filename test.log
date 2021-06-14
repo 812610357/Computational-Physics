@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020/W32TeX) (preloaded format=xelatex 2021.2.28)  14 JUN 2021 16:33
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020/W32TeX) (preloaded format=xelatex 2021.2.28)  14 JUN 2021 17:31
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -786,30 +786,22 @@ LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
 LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
 (Font)              scaled to size 4.99947pt on input line 29.
 LaTeX Font Info:    Font shape `TU/CambriaMath(2)/m/n' will be
-(Font)              scaled to size 10.54048pt on input line 43.
-LaTeX Font Info:    Font shape `TU/CambriaMath(2)/m/n' will be
-(Font)              scaled to size 7.69455pt on input line 43.
-LaTeX Font Info:    Font shape `TU/CambriaMath(2)/m/n' will be
-(Font)              scaled to size 6.3243pt on input line 43.
+(Font)              scaled to size 7.52892pt on input line 188.
 LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
-(Font)              scaled to size 10.53824pt on input line 43.
-LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
-(Font)              scaled to size 7.69292pt on input line 43.
-LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
-(Font)              scaled to size 6.32294pt on input line 43.
+(Font)              scaled to size 7.52731pt on input line 188.
  [1
 
 ] (./test.aux)
 Package rerunfilecheck Info: File `test.out' has not changed.
-(rerunfilecheck)             Checksum: 6267B4F00097961752BD95311E155B9A;1072.
+(rerunfilecheck)             Checksum: A37A19EEEC1C1EA9A148DA513909090B;1344.
  ) 
 Here is how much of TeX's memory you used:
- 19769 strings out of 476939
- 371156 string characters out of 5826132
- 886665 words of memory out of 5000000
- 39461 multiletter control sequences out of 15000+600000
- 407206 words of font info for 80 fonts, out of 8000000 for 9000
+ 19750 strings out of 476939
+ 370510 string characters out of 5826132
+ 905665 words of memory out of 5000000
+ 39451 multiletter control sequences out of 15000+600000
+ 406143 words of font info for 70 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 98i,14n,116p,372b,424s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 98i,14n,116p,372b,374s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on test.pdf (1 page).

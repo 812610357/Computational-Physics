@@ -38,8 +38,7 @@
 
 \subsection{浮点数计算}
 标准化IEEE浮点数$\pm 1.bbb\cdots b \times 2^p$，IEEE最近舍入法则：对53位，如果为0，则舍去，如果为1，则进位。
-\begin{table}[h]
-    \centering
+\begin{center}
     \begin{tabular}{cccc}
         \hline
         精度     & 符号 & 指数 & 尾数 \\
@@ -49,8 +48,7 @@
         长双精度 & 1    & 15   & 64   \\
         \hline
     \end{tabular}
-\end{table}
-
+\end{center}
 加减法时需要用0补齐到指数最大的数对应的位置。
 \begin{align*}
     (8.3)_{10}=(1000.0\overline{1001})_2=1.0000\overline{1001}\times 2^3=1.\cdots 110011010                & \times 2^3 \\
@@ -64,28 +62,14 @@
 \section{解方程}
 
 \subsection{二分法}
-\begin{algorithm}
-    \KwIn{初始区间$[a,b]$使$f(a)f(b)<0$}
-    \While{$(b-a)/2>TOL$}{
-        $c=(a+b)/2$\\
-        \If{$f(c) = 0$}{
-            \textbf{break}
-        }
-        \eIf{$f(a)f(c)<0$}{
-            $b=c$
-        }{
-            $a=c$
-        }
-    }
-    \KwOut{近似根$r=(a+b)/2$}
-\end{algorithm}
+初始区间$[a,b]$使$f(a)f(b)<0$，取中点$c=(a+b)/2$，计算$f(c)$，若$f(a)f(c)<0$，下一迭代区间为$[a,c]$，若$f(c)f(b)<0$，下一迭代区间为$[c,b]$，输出近似解为$r=(a+b)/2$。
 
 \subsection{不动点迭代}
+将方程$f(x)=0$变换为$g(x)=x$。
 \begin{align*}
     x_{i+1} & =g(x_i) & |g'(r)| & <1
 \end{align*}
-
-\subsection{牛顿方法}
+牛顿法为特殊的不动点迭代方法，可以达到二次收敛。
 \begin{align*}
     x_{i+1} & =x_i-\frac{f(x_i)}{f(x_{i+1})} & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i^2} & =\left| \frac{f''(r)}{2f'(r)} \right| & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i} & =\frac{m-1}{m}
 \end{align*}
@@ -93,10 +77,10 @@
 \section{解方程组}
 
 \subsection{高斯消元法}
-高斯消元的操作次数：$\frac{2}{3}n^3$
+高斯消元的操作次数：$\frac{2}{3}n^3$。
 
 \subsection{LU分解}
-LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
+LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$。
 
 \subsection{PA=LU分解}
 部分主元：每一行根据第一列元素从大到小排序，避免湮灭问题。
@@ -153,7 +137,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
         c_1 \\
         c_2
     \end{bmatrix}
-    &=
+     & =
     \begin{bmatrix}
         0 & 1 \\
         1 & 0
@@ -162,7 +146,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
         4 \\
         1
     \end{bmatrix}
-    &
+     &
     Ux=c \Rightarrow
     \begin{bmatrix}
         3 & 2           \\
@@ -172,7 +156,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
         x_1 \\
         x_2
     \end{bmatrix}
-    &=
+     & =
     \begin{bmatrix}
         c_1 \\
         c_2
@@ -180,5 +164,51 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \end{align*}
 
 \subsection{迭代方法}
-要求矩阵$A$为严格对焦占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$
+要求矩阵$A$为严格对焦占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$，$D$表示$A$的主对角线矩阵，$L$表示$A$的下三角矩阵，$U$表示$A$的上三角矩阵。
+
+雅可比方法
+\begin{align*}
+    x_{k+1}=D^{-1}(b-(L+U)x_k)
+\end{align*}
+
+高斯-赛德尔方法
+\begin{align*}
+    x_{k+1}=D^{-1}(b-Ux_k-Lx_{k+1})
+\end{align*}
+
+连续过松弛$\omega>1$，$\omega=1$时，退化为高斯-赛德尔方法
+\begin{align*}
+    x_{k+1}=(\omega L+D)^{-1}[(1-\omega)Dx_k-\omega Ux_k-Lx_{k+1}]+\omega(D+\omega L)^{-1}b
+\end{align*}
+
+\section{插值}
+\subsection{拉格朗日插值}
+对$n$个数据点$(x_1,y_1),\cdots,(x_n,y_n)$，有$n-1$阶多项式
+\footnotesize
+\begin{align*}
+    L_k(x)     & =\frac{(x-x_1)\cdots(x-x_{k-1})(x-x_{k+1})\cdots(x-x_n)}{(x_k-x_1)\cdots(x_k-x_{k-1})(x_k-x_{k+1})\cdots(x_k-x_n)}                      \\
+    P_{n-1}(x) & =y_1L_1(x)+\cdots+y_nL_n(x)                                                                                                             \\
+    P_2(x)     & =y_1\frac{(x-x_2)(x-x_3)}{(x_1-x_2)(x_1-x_3)}+y_2\frac{(x-x_3)(x-x_1)}{(x_2-x_3)(x_2-x_1)}+y_3\frac{(x-x_1)(x-x_2)}{(x_3-x_1)(x_3-x_2)}
+\end{align*}
+\small
+
+\subsection{牛顿商差}
+\begin{center}
+    \begin{tabular}{c|ccc}
+        $x_1$ & $f[x_1]$ &                 &                        \\
+              &          & $f[x_1 \, x_2]$ &                        \\
+        $x_2$ & $f[x_2]$ &                 & $f[x_1 \, x_2 \, x_3]$ \\
+              &          & $f[x_2 \, x_3]$ &                        \\
+        $x_3$ & $f[x_3]$ &                 &
+    \end{tabular}
+\end{center}
+\begin{align*}
+    f[x_k]                       & =f(x_k)                                                      \\
+    f[x_k \, x_{k+1}]            & =\frac{f[x_{k+1}]-f[x_k]}{x_{k+1}-x_k}                       \\
+    f[x_k \, x_{k+1} \, x_{k+2}] & =\frac{f[x_{k+1} \, x_{k+2}]-f[x_k \, x_{k+1}]}{x_{k+2}-x_k}\\
+    P_{n-1}(x)&=\sum_{i=1}^n f[x_1\cdots x_i](x-x_1)\cdots(x-x_{i-1})
+\end{align*}
+
+\subsection{切比雪夫插值}
+
 \end{document}
