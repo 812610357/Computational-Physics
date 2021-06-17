@@ -16,7 +16,8 @@
 \usepackage{xcolor}
 \usepackage{algorithm2e} %伪代码宏
 \usepackage{booktabs} %画三线表
-\usepackage{arydshln}
+\usepackage{arydshln} %添加虚线
+\usepackage{makecell}
 %\renewcommand{\vec}[1]{\boldsymbol{#1}}
 
 \setmathfont{Cambria Math}
@@ -28,14 +29,11 @@
 \section{基础知识}
 
 \subsection{二进制十进制转换}
-例如$(53.7)_{10}=(110101.1\overline{0110})$
+例如$(53.7)_{10}=(110101.1\overline{0110})$，小数点左边倒序，小数点右边正序。
 \begin{align*}
-    53 \div 2 & = 26 \cdots 1 & 0.7 \times 2 & =0.4 + 1 \\
-    26 \div 2 & = 13 \cdots 0 & 0.4 \times 2 & =0.8 + 0 \\
-    13 \div 2 & = 6  \cdots 1 & 0.8 \times 2 & =0.6 + 1 \\
-    6  \div 2 & = 3  \cdots 0 & 0.6 \times 2 & =0.2 + 1 \\
-    3  \div 2 & = 1  \cdots 1 & 0.2 \times 2 & =0.4 + 0 \\
-    1  \div 2 & = 0  \cdots 1 & 0.4 \times 2 & =0.8 + 0
+    53 \div 2 & = 26 \cdots 1 & 6  \div 2 & = 3  \cdots 0 & 0.7 \times 2 & =0.4 + 1 & 0.6 \times 2 & =0.2 + 1 \\
+    26 \div 2 & = 13 \cdots 0 & 3  \div 2 & = 1  \cdots 1 & 0.4 \times 2 & =0.8 + 0 & 0.2 \times 2 & =0.4 + 0 \\
+    13 \div 2 & = 6  \cdots 1 & 1  \div 2 & = 0  \cdots 1 & 0.8 \times 2 & =0.6 + 1 & 0.4 \times 2 & =0.8 + 0
 \end{align*}
 
 \subsection{浮点数计算}
@@ -55,10 +53,10 @@
 \begin{align*}
     (8.3)_{10}=(1000.0\overline{1001})_2=1.0000\overline{1001}\times 2^3=1.\cdots 110011010                & \times 2^3 \\
     (7.3)_{10}=(111.0\overline{1001})_2=1.110\overline{1\textcolor{red}{001}}\times 2^2=1.\cdots 100110011 & \times 2^2 \\
-    (8.3)_{10}-(7.3)_{10}=1.00001001\cdots 10011010\textcolor{blue}{0}                                     & \times 2^3 \\
-    -0.11101001\cdots 10011001\textcolor{red}{1}                                                           & \times 2^3 \\
-    =0.00100000\cdots 00000000\textcolor{red}{1}                                                           & \times 2^3 \\
-    =1.00000000\cdots 00000100\textcolor{white}{0}                                                         & \times 2^0
+    \text{（向52位之后的位置补齐）}(8.3)_{10}-(7.3)_{10}=1.00001001\cdots 10011010\textcolor{blue}{0}      & \times 2^3 \\
+    \text{（对齐，保留52位之后的数字）}-0.11101001\cdots 10011001\textcolor{red}{1}                        & \times 2^3 \\
+    \text{（52位之后的数字也要进行计算）}=0.00100000\cdots 00000000\textcolor{red}{1}                      & \times 2^3 \\
+    \text{（移动到0位为1，舍入到52位）}=1.00000000\cdots 00000100\textcolor{white}{0}                      & \times 2^0
 \end{align*}
 
 \section{解方程}
@@ -183,7 +181,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 
 连续过松弛$\omega>1$，$\omega=1$时，退化为高斯-赛德尔方法
 \begin{align*}
-    x_{k+1}=(\omega L+D)^{-1}[(1-\omega)Dx_k-\omega Ux_k-Lx_{k+1}]+\omega(D+\omega L)^{-1}b
+    x_{k+1}=(\omega L+D)^{-1}[(1-\omega)\mathrm{d}x_k-\omega Ux_k-Lx_{k+1}]+\omega(D+\omega L)^{-1}b
 \end{align*}
 
 \subsection{误差}
@@ -200,21 +198,27 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \end{align*}
 
 \subsection{牛顿商差}
-\begin{center}
-    \begin{tabular}{c|ccc}
-        $x_1$ & $f[x_1]$ &                 &                        \\
-              &          & $f[x_1 \, x_2]$ &                        \\
-        $x_2$ & $f[x_2]$ &                 & $f[x_1 \, x_2 \, x_3]$ \\
-              &          & $f[x_2 \, x_3]$ &                        \\
-        $x_3$ & $f[x_3]$ &                 &
-    \end{tabular}
-\end{center}
-\begin{align*}
-    f[x_k]                       & =f(x_k)                                                      \\
-    f[x_k \, x_{k+1}]            & =\frac{f[x_{k+1}]-f[x_k]}{x_{k+1}-x_k}                       \\
-    f[x_k \, x_{k+1} \, x_{k+2}] & =\frac{f[x_{k+1} \, x_{k+2}]-f[x_k \, x_{k+1}]}{x_{k+2}-x_k} \\
-    P_{n-1}(x)                   & =\sum_{i=1}^n f[x_1\cdots x_i](x-x_1)\cdots(x-x_{i-1})
-\end{align*}
+\noindent
+\begin{minipage}{0.42\linewidth}
+    \begin{center}
+        \begin{tabular}{c|ccc}
+            $x_1$ & $f[x_1]$ &                 &                        \\
+                  &          & $f[x_1 \, x_2]$ &                        \\
+            $x_2$ & $f[x_2]$ &                 & $f[x_1 \, x_2 \, x_3]$ \\
+                  &          & $f[x_2 \, x_3]$ &                        \\
+            $x_3$ & $f[x_3]$ &                 &
+        \end{tabular}
+    \end{center}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+    \begin{align*}
+        f[x_k]                       & =f(x_k)                                                      \\
+        f[x_k \, x_{k+1}]            & =\frac{f[x_{k+1}]-f[x_k]}{x_{k+1}-x_k}                       \\
+        f[x_k \, x_{k+1} \, x_{k+2}] & =\frac{f[x_{k+1} \, x_{k+2}]-f[x_k \, x_{k+1}]}{x_{k+2}-x_k} \\
+        P_{n-1}(x)=\sum_{i=1}^n      & f[x_1\cdots x_i](x-x_1)\cdots(x-x_{i-1})
+    \end{align*}
+\end{minipage}
+
 
 \subsection{切比雪夫插值}
 在区间$[a,b]$内，切比雪夫插值节点
@@ -346,18 +350,18 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \subsection{数值积分}
 梯形法则与复合梯形法则
 \begin{align*}
-    \int_{x_0}^{x_1} f(x) \,dx & = \frac{h}{2}(y_0+y_1)-\frac{h^3}{12}f''(c)                           & h & =x_1-x_0       \\
-    \int_{a}^{b} f(x) \,dx     & = \frac{h}{2}(y_0+y_m+2\sum_{i=1}^{m-1}y_i)-\frac{(b-a)h^2}{12}f''(c) & h & =\frac{b-a}{m}
+    \int_{x_0}^{x_1} f(x) \,\mathrm{d}x & = \frac{h}{2}(y_0+y_1)-\frac{h^3}{12}f''(c)                           & h & =x_1-x_0       \\
+    \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{2}(y_0+y_m+2\sum_{i=1}^{m-1}y_i)-\frac{(b-a)h^2}{12}f''(c) & h & =\frac{b-a}{m}
 \end{align*}
 辛普森法则与复合辛普森法则
 \begin{align*}
-    \int_{x_0}^{x_3} f(x) \,dx & = \frac{h}{3}(y_0+4y_1+y_2)-\frac{h^5}{90}f^{(4)}(c) \qquad \qquad h=x_1-x_0=x_2-x_1                                            \\
-    \int_{a}^{b} f(x) \,dx     & = \frac{h}{3}(y_0+y_{m2}+4\sum_{i=1}^{m}y_{2i-1}+2\sum_{i=1}^{m-1}y_{2i})-\frac{(b-a)h^4}{180}f^{(4)}(c) \quad h=\frac{b-a}{2m}
+    \int_{x_0}^{x_3} f(x) \,\mathrm{d}x & = \frac{h}{3}(y_0+4y_1+y_2)-\frac{h^5}{90}f^{(4)}(c) \qquad \qquad h=x_1-x_0=x_2-x_1                                            \\
+    \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{3}(y_0+y_{m2}+4\sum_{i=1}^{m}y_{2i-1}+2\sum_{i=1}^{m-1}y_{2i})-\frac{(b-a)h^4}{180}f^{(4)}(c) \quad h=\frac{b-a}{2m}
 \end{align*}
 中点法则与复合中点法则
 \begin{align*}
-    \int_{x_0}^{x_1} f(x) \,dx & =hf(x0+\frac{h}{2})+\frac{h^3}{24}f''(c)                       & h & =x_1-x_0       \\
-    \int_{a}^{b} f(x) \,dx     & =h\sum_{i=0}^{m-1}f(x_i+\frac{h}{2})+\frac{(b-a)h^2}{24}f''(c) & h & =\frac{b-a}{m}
+    \int_{x_0}^{x_1} f(x) \,\mathrm{d}x & =hf(x0+\frac{h}{2})+\frac{h^3}{24}f''(c)                       & h & =x_1-x_0       \\
+    \int_{a}^{b} f(x) \,\mathrm{d}x     & =h\sum_{i=0}^{m-1}f(x_i+\frac{h}{2})+\frac{(b-a)h^2}{24}f''(c) & h & =\frac{b-a}{m}
 \end{align*}
 
 \subsection{龙贝格积分}
@@ -367,12 +371,113 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \end{align*}
 \begin{align*}
            & \begin{matrix}
-        R_{11} &        &        \\
-        R_{21} & R_{22} &        \\
-        \vdots &        & \ddots
+        R_{11} &        &        &        \\
+        R_{21} & R_{22} &        &        \\
+        R_{31} & R_{32} & R_{33} & \ddots
     \end{matrix}                      &
-    R_{jk} & =\frac{4^{k-1}R_{j,k-1}-R_{j-1,k-1}}{4^{k-1}-1} & R_jj\text{即为定积分的}2j\text{阶近似}
+    R_{jk} & =\frac{4^{k-1}R_{j,k-1}-R_{j-1,k-1}}{4^{k-1}-1} & R_{jj}\text{即为定积分的}2j\text{阶近似}
 \end{align*}
 
 \subsection{高斯积分}
+\begin{center}
+    \begin{tabular}{c|c|c}
+        \toprule
+        $n$阶 & 根$x_i$                                                      & 系数$c_i$ \\
+        \hline
+        $2$   & \makecell{$-\sqrt{\frac{1}{3}}=-0.577350269189$                          \\$\sqrt{\frac{1}{3}}=0.577350269189$}       &  \makecell{$1=1.000000000000$\\$1=1.000000000000$}         \\
+        \hline
+        $3$   & \makecell{$-\sqrt{\frac{3}{5}}=-0.774596669241$                          \\$0=0.000000000000$\\$\sqrt{\frac{3}{5}}=0.774596669241$}&\makecell{$\frac{5}{9}=0.555555555556$\\$\frac{8}{9}=0.888888888889$\\$\frac{5}{9}=0.555555555556$}\\
+        \hline
+        $4$   & \makecell{$-\sqrt{\frac{15+2\sqrt{30}}{35}}=-0.861136311594$             \\$-\sqrt{\frac{15-2\sqrt{30}}{35}}=-0.339981043585$\\$\sqrt{\frac{15-2\sqrt{30}}{35}}=0.339981043585$\\$\sqrt{\frac{15+2\sqrt{30}}{35}}=0.861136311594$}&\makecell{$\frac{90-5\sqrt{30}}{180}=0.347854845137$\\$\frac{90+5\sqrt{30}}{180}=0.652145154863$\\$\frac{90+5\sqrt{30}}{180}=0.652145154863$\\$\frac{90-5\sqrt{30}}{180}=0.347854845137$}\\
+        \bottomrule
+    \end{tabular}
+\end{center}
+对于积分区间不在$[-1,1]$上的积分，利用换元归一化到$[-1,1]$。s
+\begin{align*}
+    \int_{-1}^{1} f(x) \,\mathrm{d}x \approx & =\sum_{i=1}^{n}c_if(x_i) & \int_{a}^{b} f(x) \,\mathrm{d}x & = \int_{-1}^{1} f\left( \frac{(b-a)t+b+a}{2} \right)\frac{b-a}{2} \,\mathrm{d}t
+\end{align*}
+
+\section{常微分方程}
+
+\subsection{初值问题}
+欧拉方法，中点方法，显示梯形方法，$k$阶泰勒方法，偏导展开
+\begin{align*}
+    w_{i+1} & =w_i+hf(t_i,w_i),\,\,\,\,\, w_{i+1}=w_i+hf\left(t_i+\frac{h}{2},w_i+\frac{h}{2}f(t_i,w_i)\right)                                                       \\
+    w_{i+1} & =w_{i}+\frac{h}{2}f(t_i,w_i)+\frac{h}{2}f\left(t_i+h,w_i+hf(t_i,w_i)\right)                                                                 \\
+    w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}f'(t_i,w_i)+\cdots+\frac{h^k}{k!}f^{(k-1)}(t_i,w_i)                                                           \\
+    w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}\left[ \frac{\partial f}{\partial t}(t_i,w_i)+\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \right]+\cdots
+\end{align*}
+二阶龙格库塔，第一种解为显示梯形方法，第二种解为中点方法
+\begin{align*}
+    w_{i+1} & =w_i+af(t_i,w_i)+bf\left(t_i+\alpha h,w_i+\beta f(t_i,w_i)\right)                                                           \\
+    w_{i+1} & =w_i+(a+b)f(t_i,w_i)+b\alpha h\frac{\partial f}{\partial t}(t_i,w_i)+b\beta\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \\
+            &
+    \begin{cases}
+        a+b=h \\
+        b\alpha h=b\beta=\frac{h^2}{2}
+    \end{cases}
+    \Rightarrow
+    \begin{cases}
+        a=b=\frac{h}{2} \\
+        \alpha=1,\beta=h
+    \end{cases}
+    \text{or\quad}
+    \begin{cases}
+        a=0,b=h \\
+        \alpha=\frac{1}{2},\beta=\frac{h}{2}
+    \end{cases}
+\end{align*}
+四阶龙格库塔\qquad$w_{i+1}=w_i+\frac{h}{6}(s_1+2s_2+2s_3+s_4)$\qquad$s_1=f(t_i,w_i)$
+\begin{align*}
+    s_2 & =f\left( t_i+\frac{h}{2},w_i+\frac{h}{2}s_1 \right) & s_3 & =f\left( t_i+\frac{h}{2},w_i+\frac{h}{2}s_2 \right) & s_4 & =f\left( t_i+h,w_i+hs_3 \right)
+\end{align*}
+
+\subsection{边值问题}
+利用差分公式替换微分方程中的导数，组装矩阵，估计初值，解方程组。
+\begin{align*}
+    \begin{cases}
+        y''=4y+t^2 \\
+        y(a)=y_a   \\
+        y(b)=y_b
+    \end{cases}
+    \Rightarrow
+    \begin{cases}
+        y_a+(-4h^2-2)w_1+w_2+h^2t_1^2=0         & t_1=a+h\text{处}          \\
+        w_{i-1}+(-4h^2-2)w_i+w_{i+1}+h^2t_i^2=0 & \text{非边界}t_i\text{处} \\
+        w_{n-1}+(-4h^2-2)w_n+y_b+h^2t_n^2=0     & t_n=b-h\text{处}
+    \end{cases} \\
+    \begin{bmatrix}
+        -4h^2-2 & 1       & 0 & \cdots & 0 & 0       & 0       \\
+        1       & -4h^2-2 & 1 &        & 0 & 0       & 0       \\
+        0       & 1       &   & \ddots & 0 & 0       & 0       \\
+        \vdots  &         &   & \ddots &   &         & \vdots  \\
+        0       & 0       & 0 & \ddots &   & 1       & 0       \\
+        0       & 0       & 0 &        & 1 & -4h^2-2 & 1       \\
+        0       & 0       & 0 & \cdots & 0 & 1       & -4h^2-2
+    \end{bmatrix}
+    \begin{bmatrix}
+        w_1     \\
+        w_2     \\
+        w_3     \\
+        \vdots  \\
+        w_{n-2} \\
+        w_{n-1} \\
+        w_n
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        -h^2t_1^2-y_a \\
+        -h^2t_2^2     \\
+        -h^2t_3^2     \\
+        \vdots        \\
+        -h^2t_{n-2}^2 \\
+        -h^2t_{n-1}^2 \\
+        -h^2t_n^2-y_b
+    \end{bmatrix}
+\end{align*}
+有限差分法$n$个区间，区间大小$h=1/(n+1)$，并可以得到n个方程
+\begin{align*}
+    \frac{w_{i-1}-2w_i+w_{i+1}}{h^2}-4w_i & =0 & w_0 & =a & w_n & =b
+\end{align*}
+
 \end{document}
