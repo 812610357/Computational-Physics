@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020/W32TeX) (preloaded format=xelatex 2021.2.28)  17 JUN 2021 19:08
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020/W32TeX) (preloaded format=xelatex 2021.2.28)  18 JUN 2021 11:03
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -828,37 +828,47 @@ LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
 LaTeX Font Info:    Font shape `TU/CambriaMath(3)/m/n' will be
 (Font)              scaled to size 4.99947pt on input line 32.
 
-Overfull \hbox (19.94693pt too wide) in paragraph at lines 204--211
+Overfull \hbox (19.94693pt too wide) in paragraph at lines 193--200
  [] 
  []
 
 
-Overfull \hbox (13.70978pt too wide) detected at line 219
+Overfull \hbox (13.70978pt too wide) detected at line 208
+[]
+ []
+
+
+Overfull \hbox (2.8994pt too wide) detected at line 215
 []
  []
 
 [1
 
 ]
-Overfull \hbox (2.74274pt too wide) detected at line 360
+Overfull \hbox (2.74274pt too wide) detected at line 336
 []
  []
 
 
-Overfull \hbox (2.62804pt too wide) detected at line 477
+Overfull \hbox (11.21014pt too wide) detected at line 362
+[]
+ []
+
+
+Overfull \hbox (2.62804pt too wide) detected at line 481
 []
  []
 
 [2] (./test.aux)
 Package rerunfilecheck Info: File `test.out' has not changed.
-(rerunfilecheck)             Checksum: 1E64A3C9E98BC1063AB3286A1F2EC68D;2818.
+(rerunfilecheck)             Checksum: DA76A9653A6B423FACE22CFC9654B1FE;2830.
  ) 
 Here is how much of TeX's memory you used:
- 20225 strings out of 476939
- 379325 string characters out of 5826132
- 976788 words of memory out of 5000000
- 39925 multiletter control sequences out of 15000+600000
- 405032 words of font info for 61 fonts, out of 8000000 for 9000
+ 20248 strings out of 476939
+ 380740 string characters out of 5826132
+ 984778 words of memory out of 5000000
+ 39947 multiletter control sequences out of 15000+600000
+ 405040 words of font info for 62 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  98i,19n,116p,450b,355s stack positions out of 5000i,500n,10000p,200000b,80000s
 

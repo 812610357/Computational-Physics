@@ -61,29 +61,24 @@
 
 \section{解方程}
 
-\subsection{二分法}
-初始区间$[a,b]$使$f(a)f(b)<0$，取中点$c=(a+b)/2$，计算$f(c)$，若$f(a)f(c)<0$，下一迭代区间为$[a,c]$，若$f(c)f(b)<0$，下一迭代区间为$[c,b]$，输出近似解为$x_a=(a+b)/2$。
+\subsection{二分法、误差}
+初始区间$[a,b]$使$f(a)f(b)<0$，取中点$c=(a+b)/2$若$f(a)f(c)<0$，下一迭代区间为$[a,c]$，若$f(c)f(b)<0$，下一迭代区间为$[c,b]$，输出近似解为$x_a=(a+b)/2$（线性收敛）。近似解$x_a$的前向误差为$|r-x_a|$，后向误差为$|f(x_a)|$。
 
 \subsection{不动点迭代}
-将方程$f(x)=0$变换为$g(x)=x$，可以达到线性收敛。
+不动点迭代将方程$f(x)=0$变换为$g(x)=x$，满足条件可以达到线性收敛。
 \begin{align*}
-    x_{i+1} & =g(x_i) & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i}=S=|g'(r)| & <1
+    x_{i+1} & =g(x_i) & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i}=S=|g'(r)| & <1 & \textcolor{red}{x_{i+1}=x_i-\frac{f(x_i)}{f(x_{i+1})}}
 \end{align*}
-牛顿法为特殊的不动点迭代方法，可以达到二次收敛。
+\textcolor{red}{牛顿方法}，可以达到二次收敛，出现$m>2$重根时变为线性收敛。
 \begin{align*}
-    x_{i+1} & =x_i-\frac{f(x_i)}{f(x_{i+1})} & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i^2} & =\left| \frac{f''(r)}{2f'(r)} \right| & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i} & =\frac{m-1}{m}
+     \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i^2} & =\left| \frac{f''(r)}{2f'(r)} \right| & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i} & =\frac{m-1}{m} & \textcolor{blue}{x_{i+1}=x_i-\frac{mf(x_i)}{f(x_{i+1})}}
 \end{align*}
-
-\subsection{误差}
-近似解$x_a$的前向误差为$|r-x_a|$，后向误差为$|f(x_a)|$。如果$0=f(r)=f'(r)=\cdots=f^{(m-1)}(r)$，但是$f^{(m)}(r)\neq 0$，则$r$为$m$重根。
+如果$0=f(r)=f'(r)=\cdots=f^{(m-1)}(r)$，但是$f^{(m)}(r)\neq 0$，则$r$为$m$重根，可用\textcolor{blue}{改进的牛顿方法}，恢复二次收敛速度。
 
 \section{解方程组}
 
-\subsection{高斯消元法}
-高斯消元的操作次数：$\frac{2}{3}n^3$。
-
-\subsection{LU分解}
-LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$。
+\subsection{高斯消元法、LU分解}
+高斯消元的操作次数$\frac{2}{3}n^3$，LU分解的操作次数$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$。
 
 \subsection{PA=LU分解}
 部分主元：每一行根据第一列元素从大到小排序，避免湮灭问题。
@@ -166,17 +161,12 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
     \end{bmatrix}
 \end{align*}
 
-\subsection{迭代方法}
+\subsection{迭代方法、误差}
 要求矩阵$A$为严格对焦占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$，$D$表示$A$的主对角线矩阵，$L$表示$A$的下三角矩阵，$U$表示$A$的上三角矩阵。
 
-雅可比方法
+雅可比方法，高斯-赛德尔方法
 \begin{align*}
-    x_{k+1}=D^{-1}(b-(L+U)x_k)
-\end{align*}
-
-高斯-赛德尔方法
-\begin{align*}
-    x_{k+1}=D^{-1}(b-Ux_k-Lx_{k+1})
+    x_{k+1}&=D^{-1}(b-(L+U)x_k)&    x_{k+1}&=D^{-1}(b-Ux_k-Lx_{k+1})
 \end{align*}
 
 连续过松弛$\omega>1$，$\omega=1$时，退化为高斯-赛德尔方法
@@ -184,7 +174,6 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
     x_{k+1}=(\omega L+D)^{-1}[(1-\omega)\mathrm{d}x_k-\omega Ux_k-Lx_{k+1}]+\omega(D+\omega L)^{-1}b
 \end{align*}
 
-\subsection{误差}
 近似解$x_a$的余项为$r=b-Ax_a$，前向误差为$\|x-x_a\|$，后向误差为$\|b-Ax_a\|_\infty$。
 
 \section{插值}
@@ -219,22 +208,16 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
     \end{align*}
 \end{minipage}
 
-
 \subsection{切比雪夫插值}
-在区间$[a,b]$内，切比雪夫插值节点
+在区间$[a,b]$内，切比雪夫插值节点，使以下不等式在$[a,b]$内成立
 \begin{align*}
-    x_i & =\frac{a+b}{2}+\frac{b-a}{2}\cos{\frac{(2i-1)\pi}{2n}} & i=1,2,\cdots,n
-\end{align*}
-使以下不等式在$[a,b]$内成立
-\begin{align*}
-    \left| (x-x_i)\cdots(x-x_n) \right|\leqslant \frac{\left( \frac{b-a}{2} \right)^n}{2^{n-1}}
+    x_i & =\frac{a+b}{2}+\frac{b-a}{2}\cos{\frac{(2i-1)\pi}{2n}} & i&=1,2,\cdots,n&    \left| (x-x_1)\cdots(x-x_n) \right|&\leqslant \frac{\left( \frac{b-a}{2} \right)^n}{2^{n-1}}
 \end{align*}
 
 \subsection{插值误差}
 插值误差公式，以及误差上界，其中$x_{min}<c<x_{max}$，
 \begin{align*}
-    f(x)-P(x)                & =\frac{(x-x_1)\cdots(x-x_n)}{n!}f^{(n)}(c)                                             \\
-    \left| f(x)-P(x) \right| & \leqslant\frac{\left| (x-x_1)\cdots(x-x_n) \right|}{n!}\left| f^{(n)}(x) \right|_{max}
+    \left| f(x)-P(x) \right|=\frac{(x-x_1)\cdots(x-x_n)}{n!}f^{(n)}(c)  \leqslant\frac{\left| (x-x_1)\cdots(x-x_n) \right|}{n!}\left| f^{(n)}(x_i) \right|_{max}
 \end{align*}
 
 \section{最小二乘法}
@@ -262,9 +245,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \subsection{QR分解}
 使用格拉姆-斯密特正交找出$A=(A_1|\cdots|A_n)$的消减QR分解
 \begin{align*}
-    y_j & =A_j-q_1(q_1^TA_j)-q_2(q_2^TA_j)-\cdots--q_{j-1}(q_{j-1}^TA_j) & q_j=\frac{y_j}{\left\| y_j \right\|_2}
-\end{align*}
-\begin{align*}
+    y_j=A_j-q_1(q_1^TA_j)-q_2(q_2^TA_j)-\cdots--q_{j-1}(q_{j-1}^TA_j) \,\,\,\,\, q_j=\frac{y_j}{\left\| y_j \right\|_2}\\
     \begin{cases}
         r_{jj}=\left\| y_j \right\|_2 \\
         r_{ij}=q_i^TA_j
@@ -305,12 +286,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
         \vdots \\
         x_n
     \end{bmatrix}
-     & =
-    \begin{bmatrix}
-        q_1^T  \\
-        \vdots \\
-        q_m^T
-    \end{bmatrix}
+     & =Q^T
     \begin{bmatrix}
         b_1    \\
         \vdots \\
@@ -324,7 +300,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
         \cdashline{1-1}[0.8pt/2pt]
         d_{n+1} \\
         \vdots  \\
-        d_{n+m}
+        d_m
     \end{bmatrix}
 \end{align*}
 
@@ -341,10 +317,10 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
     f(x+h) & =f(x)+hf'(x)+\frac{h^2}{2}f''(x)+\frac{h^3}{3!}f'''(x)+\cdots+\frac{h^k}{k!}f^{(k)}(x)+\cdots
 \end{align*}
 
-\subsection{外推}
+\subsection{理查德外推}
 对$n$阶近似公式$F_n(x)$外推，至少可以得到$(n+1)$阶近似$Q$的公式
 \begin{align*}
-    Q \approx \frac{2^nF(h/2)-F(h)}{2^n-1}
+    Q &\approx \frac{2^nF(h/2)-F(h)}{2^n-1} & \text{对三点中心差分公式的外推结果为4阶}
 \end{align*}
 
 \subsection{数值积分}
@@ -355,7 +331,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \end{align*}
 辛普森法则与复合辛普森法则
 \begin{align*}
-    \int_{x_0}^{x_3} f(x) \,\mathrm{d}x & = \frac{h}{3}(y_0+4y_1+y_2)-\frac{h^5}{90}f^{(4)}(c) \qquad \qquad h=x_1-x_0=x_2-x_1                                            \\
+    \int_{x_0}^{x_2} f(x) \,\mathrm{d}x & = \frac{h}{3}(y_0+4y_1+y_2)-\frac{h^5}{90}f^{(4)}(c) \qquad \qquad h=x_1-x_0=x_2-x_1                                            \\
     \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{3}(y_0+y_{m2}+4\sum_{i=1}^{m}y_{2i-1}+2\sum_{i=1}^{m-1}y_{2i})-\frac{(b-a)h^4}{180}f^{(4)}(c) \quad h=\frac{b-a}{2m}
 \end{align*}
 中点法则与复合中点法则
@@ -367,18 +343,30 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \subsection{龙贝格积分}
 添加数据进行扩展，直到达到指定的精度，龙贝格积分是对复合梯形法则的外推。
 \begin{align*}
-    h_j & =\frac{b-a}{2^{j-1}} & R_{11} & =\frac{h_1}{2}(f(a)+f(b)) & R_{j1} & =\frac{1}{2}R_{j-1,1}+h_j\sum_{i=1}^{2^{j-2}}f(a+(2i-1)h_j)
-\end{align*}
-\begin{align*}
-           & \begin{matrix}
-        R_{11} &        &        &        \\
-        R_{21} & R_{22} &        &        \\
-        R_{31} & R_{32} & R_{33} & \ddots
-    \end{matrix}                      &
-    R_{jk} & =\frac{4^{k-1}R_{j,k-1}-R_{j-1,k-1}}{4^{k-1}-1} & R_{jj}\text{即为定积分的}2j\text{阶近似}
+    &h_j=\frac{b-a}{2^{j-1}} && R_{11}=\frac{h_1}{2}(f(a)+f(b)) && R_{j1}=\frac{1}{2}R_{j-1,1}+h_j\sum_{i=1}^{2^{j-2}}f(a+(2i-1)h_j)\\
+     & \begin{matrix}
+        R_{11} &        &        \\
+        R_{21} & R_{22} &        \\
+        R_{31} & R_{32} & R_{33}
+    \end{matrix}
+     &                            &
+    \begin{matrix}
+        R_{jk}=\frac{4^{k-1}R_{j,k-1}-R_{j-1,k-1}}{4^{k-1}-1} \\
+        R_{jj}\text{为定积分的}2j\text{阶近似}
+    \end{matrix}
+     &&
+    \begin{matrix}
+        R_{j+1,1}\text{是对}R_{j1}\text{的步长减半的结果（向下）} \\
+        R_{j,k+1}\text{是对}R_{jk}\text{的理查德外推结果（向右）}
+    \end{matrix}
 \end{align*}
 
 \subsection{高斯积分}
+对于积分区间不在$[-1,1]$上的积分，利用换元归一化到$[-1,1]$。
+\begin{align*}
+    \int_{-1}^{1} f(x) \,\mathrm{d}x \approx & \sum_{i=1}^{n}c_if(x_i) & \int_{a}^{b} f(x) \,\mathrm{d}x & = \int_{-1}^{1} f\left( \frac{(b-a)t+b+a}{2} \right)\frac{b-a}{2} \,\mathrm{d}t
+\end{align*}
+\subsubsection*{}
 \begin{center}
     \begin{tabular}{c|c|c}
         \toprule
@@ -392,17 +380,13 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
         \bottomrule
     \end{tabular}
 \end{center}
-对于积分区间不在$[-1,1]$上的积分，利用换元归一化到$[-1,1]$。s
-\begin{align*}
-    \int_{-1}^{1} f(x) \,\mathrm{d}x \approx & =\sum_{i=1}^{n}c_if(x_i) & \int_{a}^{b} f(x) \,\mathrm{d}x & = \int_{-1}^{1} f\left( \frac{(b-a)t+b+a}{2} \right)\frac{b-a}{2} \,\mathrm{d}t
-\end{align*}
 
 \section{常微分方程}
 
 \subsection{初值问题}
 欧拉方法，中点方法，显示梯形方法，$k$阶泰勒方法，偏导展开
 \begin{align*}
-    w_{i+1} & =w_i+hf(t_i,w_i),\,\,\,\,\, w_{i+1}=w_i+hf\left(t_i+\frac{h}{2},w_i+\frac{h}{2}f(t_i,w_i)\right)                                                       \\
+    w_{i+1} & =w_i+hf(t_i,w_i),\,\,\,\,\, w_{i+1}=w_i+hf\left(t_i+\frac{h}{2},w_i+\frac{h}{2}f(t_i,w_i)\right)                                            \\
     w_{i+1} & =w_{i}+\frac{h}{2}f(t_i,w_i)+\frac{h}{2}f\left(t_i+h,w_i+hf(t_i,w_i)\right)                                                                 \\
     w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}f'(t_i,w_i)+\cdots+\frac{h^k}{k!}f^{(k-1)}(t_i,w_i)                                                           \\
     w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}\left[ \frac{\partial f}{\partial t}(t_i,w_i)+\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \right]+\cdots
@@ -430,6 +414,26 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 四阶龙格库塔\qquad$w_{i+1}=w_i+\frac{h}{6}(s_1+2s_2+2s_3+s_4)$\qquad$s_1=f(t_i,w_i)$
 \begin{align*}
     s_2 & =f\left( t_i+\frac{h}{2},w_i+\frac{h}{2}s_1 \right) & s_3 & =f\left( t_i+\frac{h}{2},w_i+\frac{h}{2}s_2 \right) & s_4 & =f\left( t_i+h,w_i+hs_3 \right)
+\end{align*}
+
+\subsection{利普希茨连续、唯一性}
+当存在利普希茨常熟$L$对$S=[a,b]\times[\alpha,\beta]$中的每一对$(t,y_1),(t,y_2)$都满足
+\begin{align*}
+    \left| f(t,y_1)-f(t,y_2) \right| &\leq L\left| y_1-y_2 \right|&&\textcolor{blue}{L=\left| \frac{\partial f}{\partial y}(t,c) \right|_{max}}& 
+    \begin{cases}
+        y'=f(t,y)\\
+        y(a)=y_0
+    \end{cases}
+    &t\in[a,c]
+\end{align*}
+则\textcolor{red}{$f(t,y)$相对于$y$在$S$上利普希茨连续}，也可以\textcolor{blue}{使用求导的方法得到利普希茨常熟}。
+
+\textcolor{red}{满足以上条件}，且$\alpha<y_0<\beta$，则存在$c\in(a,b)$使初值问题有唯一解。如果$f(t,y)$相对于$y$在$S=[a,b]\times(-\infty,\infty)$利普希茨连续，则在$[a,b]$上存在唯一解。
+
+\textcolor{red}{满足以上条件}，如果$Y(t),Z(t)$是$y'=f(t,y)$在$S$上的解，分别有初始值
+\begin{align*}
+    Y(a),Z(a)&&\text{则}&&
+    \left| Y(t)-Z(t) \right| \leqslant \mathrm{e}^{L(t-a)} \left| Y(a)-Z(a) \right|
 \end{align*}
 
 \subsection{边值问题}
@@ -477,7 +481,7 @@ LU分解的操作次数：$\frac{2}{3}n^3$，每次回代的操作次数：$n^2$
 \end{align*}
 有限差分法$n$个区间，区间大小$h=1/(n+1)$，并可以得到n个方程
 \begin{align*}
-    \frac{w_{i-1}-2w_i+w_{i+1}}{h^2}-4w_i & =0 & w_0 & =a & w_n & =b
+    y''=4y+t^2\Rightarrow\frac{w_{i-1}-2w_i+w_{i+1}}{h^2} & =4w_i+t_i^2 & w_0 & =a & w_n & =b
 \end{align*}
 
 \end{document}
