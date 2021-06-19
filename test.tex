@@ -36,26 +36,39 @@
     13 \div 2 & = 6  \cdots 1 & 1  \div 2 & = 0  \cdots 1 & 0.8 \times 2 & =0.6 + 1 & 0.4 \times 2 & =0.8 + 0
 \end{align*}
 
-\subsection{浮点数计算}
-标准化IEEE浮点数$\pm 1.bbb\cdots b \times 2^p$，IEEE最近舍入法则：对53位，如果为0，则舍去，如果为1，则进位。
-\begin{center}
-    \begin{tabular}{cccc}
-        \toprule
-        精度     & 符号 & 指数 & 尾数 \\
-        \hline
-        单精度   & 1    & 8    & 23   \\
-        双精度   & 1    & 11   & 52   \\
-        长双精度 & 1    & 15   & 64   \\
-        \bottomrule
-    \end{tabular}
-\end{center}
+\subsection{浮点数、误差、加减法}
+标准化IEEE浮点数$\pm 1.bbb\cdots b \times 2^p$，IEEE最近舍入法则：对53位，如果为0，则舍去，如果为1，则进位。\textcolor{red}{舍入误差的计算}
+
+\noindent
+\begin{minipage}{0.45\linewidth}
+    \begin{center}
+        \begin{tabular}{cccc}
+            \toprule
+            精度     & 符号 & 指数 & 尾数 \\
+            \hline
+            单精度   & 1    & 8    & 23   \\
+            双精度   & 1    & 11   & 52   \\
+            长双精度 & 1    & 15   & 64   \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+    \begin{align*}
+        \mathrm{fl}(8.3)&=8.3+[1-(0.\overline{1001})_2]\times 2^{-52}\times 2^3\\
+        &=8.3+2^{-49}-(0.0\overline{1001})_2\times 2\times 2^{-49}\\
+        &=8.3+2^{-49}-0.3\times 2\times 2^{-49}\\
+        &=8.3+\textcolor{red}{0.4\times 2^{-49}}
+    \end{align*}
+\end{minipage}
+
 加减法时需要用0补齐到指数最大的数对应的位置。
 \begin{align*}
-    (8.3)_{10}=(1000.0\overline{1001})_2=1.0000\overline{1001}\times 2^3=1.\cdots 110011010                & \times 2^3 \\
-    (7.3)_{10}=(111.0\overline{1001})_2=1.110\overline{1\textcolor{red}{001}}\times 2^2=1.\cdots 100110011 & \times 2^2 \\
-    \text{（向52位之后的位置补齐）}(8.3)_{10}-(7.3)_{10}=1.00001001\cdots 10011010\textcolor{blue}{0}      & \times 2^3 \\
-    \text{（对齐，保留52位之后的数字）}-0.11101001\cdots 10011001\textcolor{red}{1}                        & \times 2^3 \\
-    \text{（52位之后的数字也要进行计算）}=0.00100000\cdots 00000000\textcolor{red}{1}                      & \times 2^3 \\
+    (8.3)_{10}=(1000.0\overline{1001})_2=1.0000\overline{1001}\times 2^3=1.\cdots 1001101\textcolor{blue}{0}\textcolor{white}{0}                & \times 2^3 \\
+    (7.3)_{10}=(111.0\overline{1001})_2=1.110\overline{1\textcolor{red}{001}}\times 2^2=1.\cdots 0011001\textcolor{blue}{1}\textcolor{white}{0}  & \times 2^2 \\
+    \text{（向52位之后的位置补齐）}(8.3)_{10}-(7.3)_{10}=1.00001001\cdots 1001101\textcolor{blue}{0}\textcolor{red}{0}      & \times 2^3 \\
+    \text{（对齐，保留52位之后的数字）}-0.11101001\cdots 1001100\textcolor{blue}{1}\textcolor{red}{1}                        & \times 2^3 \\
+    \text{（52位之后的数字也要进行计算）}=0.00100000\cdots 0000000\textcolor{blue}{0}\textcolor{red}{1}                      & \times 2^3 \\
     \text{（移动到0位为1，舍入到52位）}=1.00000000\cdots 00000100\textcolor{white}{0}                      & \times 2^0
 \end{align*}
 
@@ -162,7 +175,7 @@
 \end{align*}
 
 \subsection{迭代方法、误差}
-要求矩阵$A$为严格对焦占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$，$D$表示$A$的主对角线矩阵，$L$表示$A$的下三角矩阵，$U$表示$A$的上三角矩阵。
+要求矩阵$A$为严格对角占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$，$D$表示$A$的主对角线矩阵，$L$表示$A$的下三角矩阵，$U$表示$A$的上三角矩阵。
 
 雅可比方法，高斯-赛德尔方法
 \begin{align*}
@@ -171,7 +184,7 @@
 
 连续过松弛$\omega>1$，$\omega=1$时，退化为高斯-赛德尔方法
 \begin{align*}
-    x_{k+1}=(\omega L+D)^{-1}[(1-\omega)\mathrm{d}x_k-\omega Ux_k-Lx_{k+1}]+\omega(D+\omega L)^{-1}b
+    x_{k+1}=(\omega L+D)^{-1}[(1-\omega)Dx_k-\omega Ux_k]+\omega(D+\omega L)^{-1}b
 \end{align*}
 
 近似解$x_a$的余项为$r=b-Ax_a$，前向误差为$\|x-x_a\|$，后向误差为$\|b-Ax_a\|_\infty$。
@@ -222,24 +235,21 @@
 
 \section{最小二乘法}
 
-\subsection{不一致方程组}
-对于不一致系统$Ax=b$，求解$A^TA\bar{x}=A^Tb$
+\subsection{不一致方程组、误差}
+最小二乘解$\bar{x}$的余项为$r=b-A\bar{x}$，后向误差（二范数误差，欧式长度）为
+\begin{align*}
+    \left\| r \right\|_2&=\sqrt{r_1^2+\cdots+r_m^2} &\text{对于不一致系统}Ax=b\Rightarrow A^TA\bar{x}=A^Tb
+\end{align*}
+平方误差，均方根误差，以及三者直接的关系分别为
+\begin{align*}
+    SE & =r_1^2+\cdots+r_m^2 & RMSE & =\sqrt{\frac{r_1^2+\cdots+r_m^2}{m}} & RMSE & =\frac{\sqrt{SE}}{\sqrt{m}}=\frac{\left\| r \right\|_2}{\sqrt{m}}
+\end{align*}
 
 \subsection{数据拟合}
 多项式（线性）模型，周期型数据，指数模型的线性化。
 \begin{align*}
     y & =c_1+c_2t+c_3t^2+\cdots                                & y & =c_1+c_2\cos{2\pi t}+c_3\sin{2\pi t}                           \\
     y & =c_1\mathrm{e}^{c_2t} \Rightarrow \ln{y}=\ln{c_1}+c_2t & y & =c_1t\mathrm{e}^{c_2t} \Rightarrow \ln{y}-\ln{t}=\ln{c_1}+c_2t
-\end{align*}
-
-\subsection{误差}
-最小二乘解$\bar{x}$的余项为$r=b-A\bar{x}$，后向误差（二范数误差，欧式长度）为
-\begin{align*}
-    \left\| r \right\|_2=\sqrt{r_1^2+\cdots+r_m^2}
-\end{align*}
-平方误差，均方根误差，以及三者直接的关系分别为
-\begin{align*}
-    SE & =r_1^2+\cdots+r_m^2 & RMSE & =\sqrt{\frac{r_1^2+\cdots+r_m^2}{m}} & RMSE & =\frac{\sqrt{SE}}{\sqrt{m}}=\frac{\left\| r \right\|_2}{\sqrt{m}}
 \end{align*}
 
 \subsection{QR分解}
@@ -250,6 +260,7 @@
         r_{jj}=\left\| y_j \right\|_2 \\
         r_{ij}=q_i^TA_j
     \end{cases}
+    \quad
     A=(q_1|\cdots|q_n)
     \begin{bmatrix}
         r_{11} & \cdots & r_{1n} \\
@@ -258,6 +269,8 @@
     \end{bmatrix}
     =QR
 \end{align*}
+
+\newpage
 对$A=(A_1|\cdots|A_n)$补齐$(m-n)$个向量$[1,0,\cdots,0]^T$，计算$q_{n+1},\cdots,q_{n+m}$，得到完全QR分解，并通过回代$R\bar{x}=Q^Tb$，求解最小二乘问题（虚线以下部分直接扔掉）
 \begin{align*}
     A=(q_1|\cdots|q_m)
@@ -323,53 +336,46 @@
     Q &\approx \frac{2^nF(h/2)-F(h)}{2^n-1} & \text{对三点中心差分公式的外推结果为4阶}
 \end{align*}
 
-\subsection{数值积分}
-梯形法则与复合梯形法则
+\subsection{数值积分、求积法则、精度}
+梯形法则，中点法则，辛普森法则，及其复合法则
 \begin{align*}
     \int_{x_0}^{x_1} f(x) \,\mathrm{d}x & = \frac{h}{2}(y_0+y_1)-\frac{h^3}{12}f''(c)                           & h & =x_1-x_0       \\
-    \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{2}(y_0+y_m+2\sum_{i=1}^{m-1}y_i)-\frac{(b-a)h^2}{12}f''(c) & h & =\frac{b-a}{m}
+    \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{2}(y_0+y_m+2\sum_{i=1}^{m-1}y_i)-\frac{(b-a)h^2}{12}f''(c) & h & =\frac{b-a}{m}\\
+    \int_{x_0}^{x_1} f(x) \,\mathrm{d}x & =hf(x_0+\frac{h}{2})+\frac{h^3}{24}f''(c)                       & h & =x_1-x_0       \\
+    \int_{a}^{b} f(x) \,\mathrm{d}x     & =h\sum_{i=0}^{m-1}f(x_i+\frac{h}{2})+\frac{(b-a)h^2}{24}f''(c) & h & =\frac{b-a}{m}\\
+    \int_{x_0}^{x_2} f(x) \,\mathrm{d}x & = \frac{h}{3}(y_0+4y_1+y_2)-\frac{h^5}{90}f^{(4)}(c)&h&=x_1-x_0 = x_2-x_1                                   \\
+    \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{3}(y_0+y_{m2}+4\sum_{i=1}^{m}y_{2i-1}+2\sum_{i=1}^{m-1}y_{2i})&-&\frac{(b-a)h^4}{180}f^{(4)}(c)\quad h=\frac{b-a}{2m}
 \end{align*}
-辛普森法则与复合辛普森法则
+
+对形如下的积分公式代入$f(x)=1,x,x^2,\cdots x^n$，来确定$w_0,w_1,\cdots,w_n$，使得其有最高精度$n$，成为$n$阶积分法则。对积分法则$I$，有积分误差公式。
 \begin{align*}
-    \int_{x_0}^{x_2} f(x) \,\mathrm{d}x & = \frac{h}{3}(y_0+4y_1+y_2)-\frac{h^5}{90}f^{(4)}(c) \qquad \qquad h=x_1-x_0=x_2-x_1                                            \\
-    \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{3}(y_0+y_{m2}+4\sum_{i=1}^{m}y_{2i-1}+2\sum_{i=1}^{m-1}y_{2i})-\frac{(b-a)h^4}{180}f^{(4)}(c) \quad h=\frac{b-a}{2m}
-\end{align*}
-中点法则与复合中点法则
-\begin{align*}
-    \int_{x_0}^{x_1} f(x) \,\mathrm{d}x & =hf(x0+\frac{h}{2})+\frac{h^3}{24}f''(c)                       & h & =x_1-x_0       \\
-    \int_{a}^{b} f(x) \,\mathrm{d}x     & =h\sum_{i=0}^{m-1}f(x_i+\frac{h}{2})+\frac{(b-a)h^2}{24}f''(c) & h & =\frac{b-a}{m}
+    \int_{a}^{b} f(x) \,dx &= w_0f(x_0)+w_1f(x_1)+\cdots+w_nf(x_n)\\
+    \int_{a}^{b} f(x) \,dx - I &= \left| \frac{f^{n+1}(c)}{(n+1)!}\int_{a}^{b} (x-x_0)(x-x_1)\cdots(x-x_n) \,dx  \right|
 \end{align*}
 
 \subsection{龙贝格积分}
 添加数据进行扩展，直到达到指定的精度，龙贝格积分是对复合梯形法则的外推。
 \begin{align*}
-    &h_j=\frac{b-a}{2^{j-1}} && R_{11}=\frac{h_1}{2}(f(a)+f(b)) && R_{j1}=\frac{1}{2}R_{j-1,1}+h_j\sum_{i=1}^{2^{j-2}}f(a+(2i-1)h_j)\\
+    &h_j=\frac{b-a}{2^{j-1}} \qquad R_{11}=\frac{h_1}{2}(f(a)+f(b)) \qquad R_{j1}=\frac{1}{2}R_{j-1,1}+h_j\sum_{i=1}^{2^{j-2}}f(a+(2i-1)h_j)\\
      & \begin{matrix}
-        R_{11} &        &        \\
-        R_{21} & R_{22} &        \\
-        R_{31} & R_{32} & R_{33}
+        R_{11} &        &        &\\
+        R_{21} & R_{22} &        &\\
+        R_{31} & R_{32} & R_{33}&\\
+        \vdots&&&\ddots
     \end{matrix}
-     &                            &
-    \begin{matrix}
-        R_{jk}=\frac{4^{k-1}R_{j,k-1}-R_{j-1,k-1}}{4^{k-1}-1} \\
-        R_{jj}\text{为定积分的}2j\text{阶近似}
-    \end{matrix}
-     &&
-    \begin{matrix}
-        R_{j+1,1}\text{是对}R_{j1}\text{的步长减半的结果（向下）} \\
-        R_{j,k+1}\text{是对}R_{jk}\text{的理查德外推结果（向右）}
-    \end{matrix}
+    \qquad R_{jk}=\frac{4^{k-1}R_{j,k-1}-R_{j-1,k-1}}{4^{k-1}-1} \qquad R_{jj}\text{为定积分的}2j\text{阶近似}
 \end{align*}
+$R_{j+1,1}$是对$R_{j1}$步长减半的结果（向下），$R_{j,k+1}$是对$R_{jk}$理查德外推结果（向右）。
 
 \subsection{高斯积分}
 对于积分区间不在$[-1,1]$上的积分，利用换元归一化到$[-1,1]$。
 \begin{align*}
     \int_{-1}^{1} f(x) \,\mathrm{d}x \approx & \sum_{i=1}^{n}c_if(x_i) & \int_{a}^{b} f(x) \,\mathrm{d}x & = \int_{-1}^{1} f\left( \frac{(b-a)t+b+a}{2} \right)\frac{b-a}{2} \,\mathrm{d}t
 \end{align*}
-\subsubsection*{}
+
+\newpage
 \begin{center}
     \begin{tabular}{c|c|c}
-        \toprule
         $n$阶 & 根$x_i$                                                      & 系数$c_i$ \\
         \hline
         $2$   & \makecell{$-\sqrt{\frac{1}{3}}=-0.577350269189$                          \\$\sqrt{\frac{1}{3}}=0.577350269189$}       &  \makecell{$1=1.000000000000$\\$1=1.000000000000$}         \\
@@ -377,24 +383,23 @@
         $3$   & \makecell{$-\sqrt{\frac{3}{5}}=-0.774596669241$                          \\$0=0.000000000000$\\$\sqrt{\frac{3}{5}}=0.774596669241$}&\makecell{$\frac{5}{9}=0.555555555556$\\$\frac{8}{9}=0.888888888889$\\$\frac{5}{9}=0.555555555556$}\\
         \hline
         $4$   & \makecell{$-\sqrt{\frac{15+2\sqrt{30}}{35}}=-0.861136311594$             \\$-\sqrt{\frac{15-2\sqrt{30}}{35}}=-0.339981043585$\\$\sqrt{\frac{15-2\sqrt{30}}{35}}=0.339981043585$\\$\sqrt{\frac{15+2\sqrt{30}}{35}}=0.861136311594$}&\makecell{$\frac{90-5\sqrt{30}}{180}=0.347854845137$\\$\frac{90+5\sqrt{30}}{180}=0.652145154863$\\$\frac{90+5\sqrt{30}}{180}=0.652145154863$\\$\frac{90-5\sqrt{30}}{180}=0.347854845137$}\\
-        \bottomrule
     \end{tabular}
 \end{center}
 
 \section{常微分方程}
 
-\subsection{初值问题}
+\subsection{初值问题，方程组，高阶}
 欧拉方法，中点方法，显示梯形方法，$k$阶泰勒方法，偏导展开
 \begin{align*}
     w_{i+1} & =w_i+hf(t_i,w_i),\,\,\,\,\, w_{i+1}=w_i+hf\left(t_i+\frac{h}{2},w_i+\frac{h}{2}f(t_i,w_i)\right)                                            \\
     w_{i+1} & =w_{i}+\frac{h}{2}f(t_i,w_i)+\frac{h}{2}f\left(t_i+h,w_i+hf(t_i,w_i)\right)                                                                 \\
     w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}f'(t_i,w_i)+\cdots+\frac{h^k}{k!}f^{(k-1)}(t_i,w_i)                                                           \\
-    w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}\left[ \frac{\partial f}{\partial t}(t_i,w_i)+\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \right]+\cdots
+    w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}\left[ \frac{\partial f}{\partial t}(t_i,w_i)+\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \right]+\frac{h^3}{6}y'''(c)
 \end{align*}
 二阶龙格库塔，第一种解为显示梯形方法，第二种解为中点方法
 \begin{align*}
     w_{i+1} & =w_i+af(t_i,w_i)+bf\left(t_i+\alpha h,w_i+\beta f(t_i,w_i)\right)                                                           \\
-    w_{i+1} & =w_i+(a+b)f(t_i,w_i)+b\alpha h\frac{\partial f}{\partial t}(t_i,w_i)+b\beta\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \\
+    w_{i+1} & =w_i+(a+b)f(t_i,w_i)+b\left[ \alpha h\frac{\partial f}{\partial t}(t_i,w_i)+\beta\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i)+O(h^2) \right] \\
             &
     \begin{cases}
         a+b=h \\
@@ -415,6 +420,9 @@
 \begin{align*}
     s_2 & =f\left( t_i+\frac{h}{2},w_i+\frac{h}{2}s_1 \right) & s_3 & =f\left( t_i+\frac{h}{2},w_i+\frac{h}{2}s_2 \right) & s_4 & =f\left( t_i+h,w_i+hs_3 \right)
 \end{align*}
+对于方程组$y_1'=f_1(t,y_1,y_2,\cdots),y_2'=f_2(t,y_1,y_2,\cdots),\cdots$直接套用以上方法。
+\newline
+对于高阶$y''=f(t,y,y')$变换为$y_1=y,y_2=y$则有$y_1'=y_2,y_2'=f(t,y_1,y_2)$。
 
 \subsection{利普希茨连续、唯一性}
 当存在利普希茨常熟$L$对$S=[a,b]\times[\alpha,\beta]$中的每一对$(t,y_1),(t,y_2)$都满足
@@ -426,7 +434,7 @@
     \end{cases}
     &t\in[a,c]
 \end{align*}
-则\textcolor{red}{$f(t,y)$相对于$y$在$S$上利普希茨连续}，也可以\textcolor{blue}{使用求导的方法得到利普希茨常熟}。
+则\textcolor{red}{$f(t,y)$相对于$y$在$S$上利普希茨连续}，也可以\textcolor{blue}{使用求导的方法得到利普希茨常数}。
 
 \textcolor{red}{满足以上条件}，且$\alpha<y_0<\beta$，则存在$c\in(a,b)$使初值问题有唯一解。如果$f(t,y)$相对于$y$在$S=[a,b]\times(-\infty,\infty)$利普希茨连续，则在$[a,b]$上存在唯一解。
 
@@ -436,7 +444,7 @@
     \left| Y(t)-Z(t) \right| \leqslant \mathrm{e}^{L(t-a)} \left| Y(a)-Z(a) \right|
 \end{align*}
 
-\subsection{边值问题}
+\subsection{边值问题，有限差分方法}
 利用差分公式替换微分方程中的导数，组装矩阵，估计初值，解方程组。
 \begin{align*}
     \begin{cases}
@@ -481,7 +489,7 @@
 \end{align*}
 有限差分法$n$个区间，区间大小$h=1/(n+1)$，并可以得到n个方程
 \begin{align*}
-    y''=4y+t^2\Rightarrow\frac{w_{i-1}-2w_i+w_{i+1}}{h^2} & =4w_i+t_i^2 & w_0 & =a & w_n & =b
+    y''=4y+t^2\Rightarrow\frac{w_{i-1}-2w_i+w_{i+1}}{h^2} & =4w_i+t_i^2 & w_0 & =y_a & w_n & =y_b
 \end{align*}
 
 \end{document}
