@@ -62,7 +62,7 @@
     \end{align*}
 \end{minipage}
 
-加减法时需要用0补齐到指数最大的数对应的位置。
+加减法时需要根据大的数对齐，再用0补齐到小的数对应的最后一位。
 \begin{align*}
     (8.3)_{10}=(1000.0\overline{1001})_2=1.0000\overline{1001}\times 2^3=1.\cdots 1001101\textcolor{blue}{0}\textcolor{white}{0}                & \times 2^3 \\
     (7.3)_{10}=(111.0\overline{1001})_2=1.110\overline{1\textcolor{red}{001}}\times 2^2=1.\cdots 0011001\textcolor{blue}{1}\textcolor{white}{0}  & \times 2^2 \\
@@ -75,16 +75,18 @@
 \section{解方程}
 
 \subsection{二分法、误差}
-初始区间$[a,b]$使$f(a)f(b)<0$，取中点$c=(a+b)/2$若$f(a)f(c)<0$，下一迭代区间为$[a,c]$，若$f(c)f(b)<0$，下一迭代区间为$[c,b]$，输出近似解为$x_a=(a+b)/2$（线性收敛）。近似解$x_a$的前向误差为$|r-x_a|$，后向误差为$|f(x_a)|$。
-
+初始区间$[a,b]$使$f(a)f(b)<0$，取中点$c=(a+b)/2$若$f(a)f(c)<0$，下一迭代区间为$[a,c]$，若$f(c)f(b)<0$，下一迭代区间为$[c,b]$，输出近似解为$x_a=(a+b)/2$（线性收敛）。近似解$x_a$的前向误差为$|r-x_a|$，后向误差为$|f(x_a)|$。二分法满足
+\begin{align*}
+    |r-x_a|&<\frac{b-a}{2^{n+1}} & \text{误差放大因子}\quad\kappa=\frac{\text{相对前向误差}}{\text{相对后向误差}}=\left|\frac{\Delta r / r}{\varepsilon g(r)/g(r)}\right|=\left|\frac{g(r)}{rf'(r)}\right|
+\end{align*}
 \subsection{不动点迭代}
 不动点迭代将方程$f(x)=0$变换为$g(x)=x$，满足条件可以达到线性收敛。
 \begin{align*}
-    x_{i+1} & =g(x_i) & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i}=S=|g'(r)| & <1 & \textcolor{red}{x_{i+1}=x_i-\frac{f(x_i)}{f(x_{i+1})}}
+    x_{i+1} & =g(x_i) & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i}=S=|g'(r)| & <1 & \textcolor{red}{x_{i+1}=x_i-\frac{f(x_i)}{f'(x_i)}}
 \end{align*}
 \textcolor{red}{牛顿方法}，可以达到二次收敛，出现$m>2$重根时变为线性收敛。
 \begin{align*}
-     \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i^2} & =\left| \frac{f''(r)}{2f'(r)} \right| & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i} & =\frac{m-1}{m} & \textcolor{blue}{x_{i+1}=x_i-\frac{mf(x_i)}{f(x_{i+1})}}
+     \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i^2} & =\left| \frac{f''(r)}{2f'(r)} \right| & \lim_{i\rightarrow \infty}\frac{e_{i+1}}{e_i} & =\frac{m-1}{m} & \textcolor{blue}{x_{i+1}=x_i-\frac{mf(x_i)}{f'(x_i)}}
 \end{align*}
 如果$0=f(r)=f'(r)=\cdots=f^{(m-1)}(r)$，但是$f^{(m)}(r)\neq 0$，则$r$为$m$重根，可用\textcolor{blue}{改进的牛顿方法}，恢复二次收敛速度。
 
@@ -177,17 +179,16 @@
 \subsection{迭代方法、误差}
 要求矩阵$A$为严格对角占优矩阵，$|a_{ii}|>\sum_{i\neq j}|a_{ij}|$，$D$表示$A$的主对角线矩阵，$L$表示$A$的下三角矩阵，$U$表示$A$的上三角矩阵。
 
-雅可比方法，高斯-赛德尔方法
+雅可比方法，高斯-赛德尔方法，连续过松弛$\omega>1$，$\omega=1$时，退化
 \begin{align*}
-    x_{k+1}&=D^{-1}(b-(L+U)x_k)&    x_{k+1}&=D^{-1}(b-Ux_k-Lx_{k+1})
+    x_{k+1}&=D^{-1}(b-(L+U)x_k),  \qquad  x_{k+1}=D^{-1}(b-Ux_k-Lx_{k+1})\\
+    x_{k+1}&=(\omega L+D)^{-1}[(1-\omega)Dx_k-\omega Ux_k]+\omega(D+\omega L)^{-1}b
 \end{align*}
 
-连续过松弛$\omega>1$，$\omega=1$时，退化为高斯-赛德尔方法
+近似解$x_a$的余项为$r=b-Ax_a$，前向误差为$\|r\|_\infty$，后向误差为$\|b-Ax_a\|_\infty$。误差放大因子可能具有条件数的数量级，$\|A\|_\infty$为每行元素绝对值之和的最大值。
 \begin{align*}
-    x_{k+1}=(\omega L+D)^{-1}[(1-\omega)Dx_k-\omega Ux_k]+\omega(D+\omega L)^{-1}b
+    \text{误差放大因子}\quad\kappa&=\frac{\|x-x_a\|_\infty/\|x\|_\infty}{\|r\|_\infty/\|b\|_\infty} & \text{条件数}\quad cond=\|A\|_\infty\cdot\|A^{-1}\|_\infty
 \end{align*}
-
-近似解$x_a$的余项为$r=b-Ax_a$，前向误差为$\|x-x_a\|$，后向误差为$\|b-Ax_a\|_\infty$。
 
 \section{插值}
 
@@ -199,7 +200,7 @@
     P_2(x)     & =y_1\frac{(x-x_2)(x-x_3)}{(x_1-x_2)(x_1-x_3)}+y_2\frac{(x-x_3)(x-x_1)}{(x_2-x_3)(x_2-x_1)}+y_3\frac{(x-x_1)(x-x_2)}{(x_3-x_1)(x_3-x_2)}
 \end{align*}
 
-\subsection{牛顿商差}
+\subsection{牛顿差商}
 \noindent
 \begin{minipage}{0.42\linewidth}
     \begin{center}
@@ -222,9 +223,9 @@
 \end{minipage}
 
 \subsection{切比雪夫插值}
-在区间$[a,b]$内，切比雪夫插值节点，使以下不等式在$[a,b]$内成立
+在区间$[a,b]$内，\textcolor{red}{切比雪夫插值节点}，使以\textcolor{blue}{不等式}在$[a,b]$内成立
 \begin{align*}
-    x_i & =\frac{a+b}{2}+\frac{b-a}{2}\cos{\frac{(2i-1)\pi}{2n}} & i&=1,2,\cdots,n&    \left| (x-x_1)\cdots(x-x_n) \right|&\leqslant \frac{\left( \frac{b-a}{2} \right)^n}{2^{n-1}}
+    &\textcolor{red}{x_i=\frac{a+b}{2}+\frac{b-a}{2}\cos{\frac{(2i-1)\pi}{2n}}} & i&=1,2,\cdots,n&    &\textcolor{blue}{\left| (x-x_1)\cdots(x-x_n) \right|\leqslant \frac{\left( \frac{b-a}{2} \right)^n}{2^{n-1}}}
 \end{align*}
 
 \subsection{插值误差}
@@ -238,7 +239,7 @@
 \subsection{不一致方程组、误差}
 最小二乘解$\bar{x}$的余项为$r=b-A\bar{x}$，后向误差（二范数误差，欧式长度）为
 \begin{align*}
-    \left\| r \right\|_2&=\sqrt{r_1^2+\cdots+r_m^2} &\text{对于不一致系统}Ax=b\Rightarrow A^TA\bar{x}=A^Tb
+    \left\| r \right\|_2&=\sqrt{r_1^2+\cdots+r_m^2} &\text{对于不一致系统}\quad Ax=b\Rightarrow A^TA\bar{x}=A^Tb
 \end{align*}
 平方误差，均方根误差，以及三者直接的关系分别为
 \begin{align*}
@@ -271,7 +272,7 @@
 \end{align*}
 
 \newpage
-对$A=(A_1|\cdots|A_n)$补齐$(m-n)$个向量$[1,0,\cdots,0]^T$，计算$q_{n+1},\cdots,q_{n+m}$，得到完全QR分解，并通过回代$R\bar{x}=Q^Tb$，求解最小二乘问题（虚线以下部分直接扔掉）
+对$A=(A_1|\cdots|A_n)$补齐$(m-n)$个线性无关向量，计算$q_{n+1},\cdots,q_{n+m}$，得到完全QR分解，并通过回代$R\bar{x}=Q^Tb$，求解最小二乘问题，虚线以下部分直接扔掉，可以直接得到误差$\|e\|_2=\sqrt{d_{n+1}+\cdots d_{n+m}}$
 \begin{align*}
     A=(q_1|\cdots|q_m)
     \begin{bmatrix}
@@ -337,7 +338,7 @@
 \end{align*}
 
 \subsection{数值积分、求积法则、精度}
-梯形法则，中点法则，辛普森法则，及其复合法则
+梯形法则（精度1），中点法则（精度1），辛普森法则（精度3），及其复合法则
 \begin{align*}
     \int_{x_0}^{x_1} f(x) \,\mathrm{d}x & = \frac{h}{2}(y_0+y_1)-\frac{h^3}{12}f''(c)                           & h & =x_1-x_0       \\
     \int_{a}^{b} f(x) \,\mathrm{d}x     & = \frac{h}{2}(y_0+y_m+2\sum_{i=1}^{m-1}y_i)-\frac{(b-a)h^2}{12}f''(c) & h & =\frac{b-a}{m}\\
@@ -349,8 +350,8 @@
 
 对形如下的积分公式代入$f(x)=1,x,x^2,\cdots x^n$，来确定$w_0,w_1,\cdots,w_n$，使得其有最高精度$n$，成为$n$阶积分法则。对积分法则$I$，有积分误差公式。
 \begin{align*}
-    \int_{a}^{b} f(x) \,dx &= w_0f(x_0)+w_1f(x_1)+\cdots+w_nf(x_n)\\
-    \int_{a}^{b} f(x) \,dx - I &= \left| \frac{f^{n+1}(c)}{(n+1)!}\int_{a}^{b} (x-x_0)(x-x_1)\cdots(x-x_n) \,dx  \right|
+    \int_{a}^{b} f(x) \,\mathrm{d}x &= w_0f(x_0)+w_1f(x_1)+\cdots+w_nf(x_n)\\
+    \int_{a}^{b} f(x) \,\mathrm{d}x - I &= \left| \frac{f^{n+1}(c)}{(n+1)!}\int_{a}^{b} (x-x_0)(x-x_1)\cdots(x-x_n) \,\mathrm{d}x  \right|
 \end{align*}
 
 \subsection{龙贝格积分}
@@ -391,9 +392,9 @@ $R_{j+1,1}$是对$R_{j1}$步长减半的结果（向下），$R_{j,k+1}$是对$R
 \subsection{初值问题，方程组，高阶}
 欧拉方法，中点方法，显示梯形方法，$k$阶泰勒方法，偏导展开
 \begin{align*}
-    w_{i+1} & =w_i+hf(t_i,w_i),\,\,\,\,\, w_{i+1}=w_i+hf\left(t_i+\frac{h}{2},w_i+\frac{h}{2}f(t_i,w_i)\right)                                            \\
-    w_{i+1} & =w_{i}+\frac{h}{2}f(t_i,w_i)+\frac{h}{2}f\left(t_i+h,w_i+hf(t_i,w_i)\right)                                                                 \\
-    w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}f'(t_i,w_i)+\cdots+\frac{h^k}{k!}f^{(k-1)}(t_i,w_i)                                                           \\
+    w_{i+1} & =w_i+hf(t_i,w_i)+O(h),\,\,\,\,\, w_{i+1}=w_i+hf\left(t_i+\frac{h}{2},w_i+\frac{h}{2}f(t_i,w_i)\right)+O(h^2)                                            \\
+    w_{i+1} & =w_{i}+\frac{h}{2}f(t_i,w_i)+\frac{h}{2}f\left(t_i+h,w_i+hf(t_i,w_i)\right)+O(h^2)                                                                 \\
+    w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}f'(t_i,w_i)+\cdots+\frac{h^k}{k!}f^{(k-1)}(t_i,w_i)+O(h^{+1})                                                           \\
     w_{i+1} & =w_i+hf(t_i,w_i)+\frac{h^2}{2}\left[ \frac{\partial f}{\partial t}(t_i,w_i)+\frac{\partial f}{\partial w}(t_i,w_i)f(t_i,w_i) \right]+\frac{h^3}{6}y'''(c)
 \end{align*}
 二阶龙格库塔，第一种解为显示梯形方法，第二种解为中点方法
@@ -487,9 +488,9 @@ $R_{j+1,1}$是对$R_{j1}$步长减半的结果（向下），$R_{j,k+1}$是对$R
         -h^2t_n^2-y_b
     \end{bmatrix}
 \end{align*}
-有限差分法$n$个区间，区间大小$h=1/(n+1)$，并可以得到n个方程
+有限差分法$n$个方程，区间大小$h=1/(n+1)$
 \begin{align*}
-    y''=4y+t^2\Rightarrow\frac{w_{i-1}-2w_i+w_{i+1}}{h^2} & =4w_i+t_i^2 & w_0 & =y_a & w_n & =y_b
+    y''=4y+t^2\Rightarrow\frac{w_{i-1}-2w_i+w_{i+1}}{h^2} & =4w_i+t_i^2 & w_0 & =y_a & w_{n+1} & =y_b
 \end{align*}
 
 \end{document}
